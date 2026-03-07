@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Tech Intelligence Dashboard</title>
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────── */
+    :root {
+      --bg-base:       #0d1117;
+      --bg-sidebar:    #161b22;
+      --bg-card:       #1c2333;
+      --bg-card-hover: #212d3f;
+      --bg-header:     #161b22;
+      --border:        #30363d;
+      --text-primary:  #e6edf3;
+      --text-muted:    #8b949e;
+      --text-link:     #58a6ff;
+      --accent-ai:     #388bfd;
+      --accent-b2b:    #3fb950;
+      --accent-sales:  #f0883e;
+      --accent-infra:  #bc8cff;
+      --accent-policy: #d29922;
+      --accent-funding:#2ea043;
+      --sidebar-w:     300px;
+      --radius:        8px;
+      --font:          'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    /* ─── Reset & Base ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      display: flex;
+      overflow: hidden;
+    }
+    a { color: var(--text-link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── Scrollbar ─────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ─── Layout ────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .main {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Sidebar Header ────────────────────────────────────── */
+    .sidebar-header {
+      padding: 20px 16px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-header h2 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .sidebar-header .brand {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent-ai);
+      box-shadow: 0 0 8px var(--accent-ai);
+      flex-shrink: 0;
+    }
+
+    /* ─── Timeline (Sidebar) ────────────────────────────────── */
+    .timeline {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+    .timeline-empty {
+      padding: 24px 16px;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .timeline-entry {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .timeline-entry:hover { background: var(--bg-card); }
+    .timeline-entry.active { background: var(--bg-card); border-left: 2px solid var(--accent-ai); }
+    .timeline-date {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-link);
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+    .timeline-headline {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .timeline-count {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 10px;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1px 7px;
+      color: var(--text-muted);
+    }
+
+    /* ─── Main Header ───────────────────────────────────────── */
+    .main-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+    }
+    .main-header-left h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .main-header-left .sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .main-header-right {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(63, 185, 80, 0.12);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      border-radius: 12px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-b2b);
+      margin-bottom: 4px;
+    }
+    .live-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent-b2b);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ─── News Grid ─────────────────────────────────────────── */
+    .news-grid {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ─── News Card ─────────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .card:hover {
+      border-color: #444c56;
+      background: var(--bg-card-hover);
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .card-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 24px;
+      padding-top: 2px;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+      line-height: 1.4;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      padding: 2px 7px;
+    }
+    .tag-ai      { background: rgba(56,139,253,0.15); color: var(--accent-ai);      border: 1px solid rgba(56,139,253,0.3); }
+    .tag-b2b     { background: rgba(63,185,80,0.12);  color: var(--accent-b2b);     border: 1px solid rgba(63,185,80,0.3); }
+    .tag-sales   { background: rgba(240,136,62,0.12); color: var(--accent-sales);   border: 1px solid rgba(240,136,62,0.3); }
+    .tag-infra   { background: rgba(188,140,255,0.12);color: var(--accent-infra);   border: 1px solid rgba(188,140,255,0.3); }
+    .tag-policy  { background: rgba(210,153,34,0.12); color: var(--accent-policy);  border: 1px solid rgba(210,153,34,0.3); }
+    .tag-funding { background: rgba(46,160,67,0.12);  color: var(--accent-funding); border: 1px solid rgba(46,160,67,0.3); }
+
+    .card-summary {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    .card-impact {
+      background: rgba(56,139,253,0.06);
+      border-left: 3px solid var(--accent-ai);
+      border-radius: 0 4px 4px 0;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+    .card-impact-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-ai);
+      margin-bottom: 4px;
+    }
+    .card-impact p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .card-source {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .card-source a {
+      color: var(--text-link);
+    }
+    .card-source a:hover { text-decoration: underline; }
+
+    /* ─── Footer ────────────────────────────────────────────── */
+    .main-footer {
+      padding: 20px 28px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ LEFT SIDEBAR: Historical Timeline ════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        TechIntel
+      </div>
+      <h2>Historical Timeline</h2>
+    </div>
+
+    <div class="timeline">
+      <!-- TEMPLATE: Insert dated timeline entries below.
+           Each run, move the previous day's 'Today's Intelligence'
+           here as a new .timeline-entry block.
+           Only keep the last 5 days max for performance.
+           Example entry:
+      <div class="timeline-entry">
+        <div class="timeline-date">March 6, 2026</div>
+        <div class="timeline-headline">Top story headline of that day...</div>
+        <span class="timeline-count">20 stories</span>
+      </div>
+      -->
+      <div class="timeline-empty">No history yet. Run again tomorrow to build your timeline.</div>
+    </div>
+  </aside>
+
+  <!-- ══ RIGHT MAIN AREA: Today's Intelligence ════════════════ -->
+  <main class="main">
+    <div class="main-header">
+      <div class="main-header-left">
+        <h1>Today's Intelligence</h1>
+        <div class="sub">Sources: TechCrunch &middot; The Verge &middot; Wired &middot; and more</div>
+      </div>
+      <div class="main-header-right">
+        <div class="live-badge">Live Brief</div>
+        <div><!-- DATE PLACEHOLDER --></div>
+      </div>
+    </div>
+
+    <div class="news-grid">
+
+      <!-- TEMPLATE: Insert news cards below. Example card:
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">01</span>
+          <span class="card-title">Story Title Here</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-b2b">B2B</span>
+          </div>
+        </div>
+        <p class="card-summary">Two-sentence summary of the story goes here.</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI Industry Impact</div>
+          <p>Impact analysis text goes here.</p>
+        </div>
+        <div class="card-source">Source: <a href="URL" target="_blank" rel="noopener">Publication — Article Title</a></div>
+      </div>
+      -->
+
+    </div>
+
+    <div class="main-footer">
+      <span>Daily Tech Intelligence Dashboard</span>
+      <span><!-- COMPILED DATE PLACEHOLDER --></span>
+    </div>
+  </main>
+
+</body>
+</html>

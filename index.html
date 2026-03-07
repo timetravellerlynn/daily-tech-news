@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>每日科技情报 — 2026年3月7日</title>
+  <style>
+    /* ─── Design Tokens ─────────────────────────────────────── */
+    :root {
+      --bg-base:       #0d1117;
+      --bg-sidebar:    #161b22;
+      --bg-card:       #1c2333;
+      --bg-card-hover: #212d3f;
+      --bg-header:     #161b22;
+      --border:        #30363d;
+      --text-primary:  #e6edf3;
+      --text-muted:    #8b949e;
+      --text-link:     #58a6ff;
+      --accent-ai:     #388bfd;
+      --accent-b2b:    #3fb950;
+      --accent-sales:  #f0883e;
+      --accent-infra:  #bc8cff;
+      --accent-policy: #d29922;
+      --accent-funding:#2ea043;
+      --sidebar-w:     300px;
+      --radius:        8px;
+      --font:          'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+    }
+
+    /* ─── Reset & Base ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      display: flex;
+      overflow: hidden;
+    }
+    a { color: var(--text-link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── Scrollbar ─────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ─── Layout ────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .main {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Sidebar Header ────────────────────────────────────── */
+    .sidebar-header {
+      padding: 20px 16px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .sidebar-header h2 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .sidebar-header .brand {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent-ai);
+      box-shadow: 0 0 8px var(--accent-ai);
+      flex-shrink: 0;
+    }
+
+    /* ─── Timeline (Sidebar) ────────────────────────────────── */
+    .timeline {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+    .timeline-entry {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .timeline-entry:hover { background: var(--bg-card); }
+    .timeline-entry.active {
+      background: var(--bg-card);
+      border-left: 2px solid var(--accent-ai);
+      padding-left: 14px;
+    }
+    .timeline-date {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-link);
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+    .timeline-headline {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .timeline-count {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 10px;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1px 7px;
+      color: var(--text-muted);
+    }
+
+    /* ─── Main Header ───────────────────────────────────────── */
+    .main-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(8px);
+    }
+    .main-header-left h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .main-header-left .sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .main-header-right {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(63, 185, 80, 0.12);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      border-radius: 12px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-b2b);
+      margin-bottom: 4px;
+    }
+    .live-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent-b2b);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ─── News Grid ─────────────────────────────────────────── */
+    .news-grid {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ─── News Card ─────────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .card:hover {
+      border-color: #444c56;
+      background: var(--bg-card-hover);
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .card-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      min-width: 24px;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+      line-height: 1.5;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      border-radius: 4px;
+      padding: 2px 7px;
+    }
+    .tag-ai      { background: rgba(56,139,253,0.15); color: var(--accent-ai);      border: 1px solid rgba(56,139,253,0.3); }
+    .tag-b2b     { background: rgba(63,185,80,0.12);  color: var(--accent-b2b);     border: 1px solid rgba(63,185,80,0.3); }
+    .tag-sales   { background: rgba(240,136,62,0.12); color: var(--accent-sales);   border: 1px solid rgba(240,136,62,0.3); }
+    .tag-infra   { background: rgba(188,140,255,0.12);color: var(--accent-infra);   border: 1px solid rgba(188,140,255,0.3); }
+    .tag-policy  { background: rgba(210,153,34,0.12); color: var(--accent-policy);  border: 1px solid rgba(210,153,34,0.3); }
+    .tag-funding { background: rgba(46,160,67,0.12);  color: var(--accent-funding); border: 1px solid rgba(46,160,67,0.3); }
+
+    .card-summary {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      margin-bottom: 12px;
+      padding-left: 36px;
+    }
+    .card-impact {
+      background: rgba(56,139,253,0.06);
+      border-left: 3px solid var(--accent-ai);
+      border-radius: 0 4px 4px 0;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      margin-left: 36px;
+    }
+    .card-impact-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent-ai);
+      margin-bottom: 4px;
+    }
+    .card-impact p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .card-source {
+      font-size: 11px;
+      color: var(--text-muted);
+      padding-left: 36px;
+    }
+    .card-source a { color: var(--text-link); }
+    .card-source a:hover { text-decoration: underline; }
+
+    /* ─── Footer ────────────────────────────────────────────── */
+    .main-footer {
+      padding: 20px 28px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══ 左侧边栏：历史时间线 ══════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        科技情报台
+      </div>
+      <h2>历史时间线</h2>
+    </div>
+    <div class="timeline">
+
+      <!-- 归档：2026年3月6日 -->
+      <div class="timeline-entry">
+        <div class="timeline-date">2026年3月6日</div>
+        <div class="timeline-headline">OpenAI发布GPT-5.4三档版本，上下文窗口高达100万Token</div>
+        <span class="timeline-count">20条资讯</span>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ══ 右侧主区域：今日情报 ══════════════════════════════════ -->
+  <main class="main">
+    <div class="main-header">
+      <div class="main-header-left">
+        <h1>今日科技情报</h1>
+        <div class="sub">来源：TechCrunch · The Verge · Wired · 雅虎财经 · MacRumors · DigiTimes</div>
+      </div>
+      <div class="main-header-right">
+        <div class="live-badge">实时简报</div>
+        <div>2026年3月7日</div>
+      </div>
+    </div>
+
+    <div class="news-grid">
+
+      <!-- 01 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">01</span>
+          <span class="card-title">OpenAI完成1100亿美元超级融资，亚马逊、软银、英伟达领投</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-funding">融资</span>
+          </div>
+        </div>
+        <p class="card-summary">OpenAI完成史上最大规模科技融资，融资总额达1100亿美元，估值约7300亿美元（投前）。本轮由亚马逊（500亿美元）、软银（300亿美元）、英伟达（300亿美元）领投，三家战略投资方均与OpenAI存在深度供应链绑定。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>如此体量的融资将使OpenAI在模型研发、数据中心基础设施和全球销售扩张上同时加速。对B2B采购方而言，这意味着OpenAI的企业版定价能力大幅增强；同时也将倒逼Anthropic、Google等竞争对手加快融资节奏与产品迭代，形成新一轮军备竞赛。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://finance.yahoo.com/news/live/tech-stocks-today-nvidia-invests-4b-in-photonics-makers-apple-announces-low-cost-iphone-openai-strikes-deal-with-pentagon-163709849.html" target="_blank" rel="noopener">雅虎财经 — OpenAI融资及市场动态</a></div>
+      </div>
+
+      <!-- 02 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">02</span>
+          <span class="card-title">苹果携手谷歌Gemini重构Siri，iOS 26.4三月底发布</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-b2b">B2B</span>
+            <span class="tag tag-sales">销售</span>
+          </div>
+        </div>
+        <p class="card-summary">苹果确认将于iOS 26.4中推出由谷歌Gemini（1.2万亿参数）驱动的全新Siri，支持屏幕内容感知、多步任务链和跨应用操作，整个推理过程运行于苹果Private Cloud Compute上以保障隐私。谷歌品牌不会出现在用户界面，用户看到的仍是"Siri"。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>此合作将谷歌Gemini能力直接嵌入全球超15亿台苹果设备，对企业移动端工作流产生深远影响——iOS端AI助手将能跨越应用边界完成复杂任务，冲击现有的RPA与低代码自动化市场。B2B SaaS厂商需优先适配Siri的应用意图协议，否则面临被绕过的风险。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://www.macrumors.com/2026/01/12/google-gemini-next-generation-siri/" target="_blank" rel="noopener">MacRumors — 苹果确认谷歌Gemini将驱动新一代Siri</a></div>
+      </div>
+
+      <!-- 03 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">03</span>
+          <span class="card-title">苹果Gemini版Siri部分功能推迟至iOS 26.5及iOS 27</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-b2b">B2B</span>
+          </div>
+        </div>
+        <p class="card-summary">据9to5Mac报道，苹果正面临内部整合挑战，原定于iOS 26.4发布的部分Gemini高级功能将推迟至iOS 26.5（五月）乃至iOS 27（九月）。延期功能主要涉及多轮对话记忆与深度第三方应用集成能力。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>功能延迟对正在基于苹果AI能力规划产品路线图的B2B开发商构成直接风险，需及时调整开发周期预期。此消息也凸显大模型与平台OS深度集成的工程复杂性，企业在采购AI平台时应将"落地可靠性"纳入评估权重。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://9to5mac.com/2026/02/11/apple-reportedly-pushing-back-gemini-powered-siri-features-beyond-ios-26-4/" target="_blank" rel="noopener">9to5Mac — 苹果Gemini版Siri功能延期报道</a></div>
+      </div>
+
+      <!-- 04 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">04</span>
+          <span class="card-title">英伟达GTC 2026（3月16–19日）：黄仁勋将发布"令世界惊叹"的新芯片</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-infra">基础设施</span>
+          </div>
+        </div>
+        <p class="card-summary">英伟达GTC 2026将于3月16–19日在加州圣何塞举行，预计吸引190个国家逾3万名与会者。黄仁勋已公开预告将展示"世界从未见过的全新芯片"，市场广泛预测为采用台积电A16制程的"Feynman"处理器。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>GTC是AI基础设施供应链的年度风向标——新一代芯片架构将直接影响云厂商GPU采购路线图，进而传导至企业云计算成本。对B2B采购团队而言，GTC发布内容是决策H100/H200过渡时间节点的关键参考。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://nvidianews.nvidia.com/news/nvidia-ceo-jensen-huang-and-global-technology-leaders-to-showcase-age-of-ai-at-gtc-2026" target="_blank" rel="noopener">英伟达新闻室 — GTC 2026官方公告</a></div>
+      </div>
+
+      <!-- 05 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">05</span>
+          <span class="card-title">英伟达GTC 2026：将发布集成Groq芯片技术的新AI处理器</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-infra">基础设施</span>
+          </div>
+        </div>
+        <p class="card-summary">分析报道指出，英伟达将在GTC 2026上发布一款面向OpenAI定制的新型AI处理器，其中集成了Groq的LPU（语言处理单元）推理芯片技术。这一合作信号表明英伟达正在向专用推理加速领域延伸，而不仅限于训练算力。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>推理芯片的专用化趋势将重塑AI推理成本结构，有望大幅降低每Token的运营成本，直接利好API定价敏感的企业用户。同时，英伟达与Groq的技术融合也可能压缩纯推理芯片初创公司的独立市场空间。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://www.analyticsinsight.net/news/nvidias-gtc-2026-reveal-ai-processor-featuring-groq-technology-for-openai" target="_blank" rel="noopener">Analytics Insight — 英伟达GTC 2026 Groq芯片集成报道</a></div>
+      </div>
+
+      <!-- 06 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">06</span>
+          <span class="card-title">Ayar Labs完成5亿美元E轮融资，英伟达+AMD联合背书光学互联</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-infra">基础设施</span>
+            <span class="tag tag-funding">融资</span>
+          </div>
+        </div>
+        <p class="card-summary">光学互联芯片公司Ayar Labs完成5亿美元E轮融资，估值达37.5亿美元，由Neuberger Berman领投，英伟达、AMD、方舟投资（ARK Invest）等参与。其共封装光学（CPO）方案相比铜互联可实现每瓦20倍带宽提升，将用于量产并在台湾新竹建立新研发中心。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>光学互联是突破AI超大集群（10万GPU以上）通信瓶颈的核心技术。英伟达和AMD同时背书，意味着CPO将进入主流GPU架构路线图，直接影响数据中心网络设备采购决策。从事数据中心设计、托管或AI基础设施销售的B2B企业需要将CPO纳入长期方案规划。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://www.datacenterdynamics.com/en/news/optical-interconnect-startup-ayar-labs-closes-500m-funding-round-backed-by-nvidia-and-amd/" target="_blank" rel="noopener">Data Center Dynamics — Ayar Labs完成5亿美元融资</a></div>
+      </div>
+
+      <!-- 07 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">07</span>
+          <span class="card-title">富士康2026年前两月营收同比增22%，AI服务器成第一增长极</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-infra">基础设施</span>
+          </div>
+        </div>
+        <p class="card-summary">富士康母公司鸿海集团披露，2026年1–2月营收同比大幅增长21.6%，主要驱动力为以英伟达GPU为核心的AI服务器需求持续爆发。董事长刘扬伟表示2026年将是"非常好的一年"，全年营收预计较2025年的约8.1万亿新台币（约2530亿美元）实现双位数增长。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>富士康是英伟达服务器的最大代工厂，其营收数据是AI基础设施投资最直接的实物印证。对于评估AI基础设施供给侧产能的B2B买家而言，这意味着AI服务器交期有望改善；同时也印证了云厂商700亿美元资本开支计划正在实质性落地。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://www.datacenterdynamics.com/en/news/foxconn-revenue-up-by-22-percent-year-on-year-so-far-in-2026/" target="_blank" rel="noopener">Data Center Dynamics — 富士康2026年一季度营收增长</a></div>
+      </div>
+
+      <!-- 08 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">08</span>
+          <span class="card-title">百度季度利润暴跌42%，AI投入与短期盈利的矛盾加剧</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-policy">政策</span>
+          </div>
+        </div>
+        <p class="card-summary">百度最新财季净利润同比下滑42%，主要原因是大模型研发、文心一言系列应用推广及算力基础设施的持续高额投入。尽管文心大模型用户规模持续增长，但商业化变现速度明显滞后于投入。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>百度的困境揭示了当前AI商业化的普遍悖论：规模投入是维持竞争力的必要条件，但短期内难以形成足够的收入对冲。这对正在评估中国AI供应商作为B2B合作伙伴的企业是一个重要信号——供应商财务健康度需纳入风险评估体系。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://techstartups.com/2026/03/06/top-tech-news-today-march-6-2026/" target="_blank" rel="noopener">Tech Startups — 2026年3月6日科技资讯汇总</a></div>
+      </div>
+
+      <!-- 09 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">09</span>
+          <span class="card-title">阿里巴巴高管离职潮后战略转向，全力押注基础大模型</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+          </div>
+        </div>
+        <p class="card-summary">阿里巴巴AI部门再度传出高管离职消息，公司随即宣布将内部资源向基础大模型研发大幅倾斜，部分应用层产品团队缩编。这是阿里继去年大规模组织重组后，AI战略的又一次收缩聚焦。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>阿里的战略收缩可能导致其面向企业用户的AI应用产品（如通义千问企业版）服务连续性存疑，依赖阿里云AI能力的B2B客户应评估备选方案。另一方面，阿里回归基础模型也可能在未来12–18个月内带来模型能力的实质性提升。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://techstartups.com/2026/03/06/top-tech-news-today-march-6-2026/" target="_blank" rel="noopener">Tech Startups — 2026年3月6日科技资讯汇总</a></div>
+      </div>
+
+      <!-- 10 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">10</span>
+          <span class="card-title">中国五年规划：AI被提及逾50次，覆盖量子、6G、具身智能全产业</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-policy">政策</span>
+          </div>
+        </div>
+        <p class="card-summary">中国最新五年经济规划将"AI+"行动计划贯穿全文，提及AI超过50次，并将具身智能、机器脑接口、量子计算、6G、可复用火箭和月球基础设施列为国家战略投资重点。规划将AI定位为整个国民经济的"操作系统"，而非单一行业。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>国家级政策背书意味着中国制造、医疗、教育、物流等全行业将迎来AI采购强制驱动力，形成数万亿元级的B2B市场机会。对于布局中国市场的跨国AI企业，这是进入契机，但数据主权与合规要求将是核心门槛。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://techstartups.com/2026/03/06/top-tech-news-today-march-6-2026/" target="_blank" rel="noopener">Tech Startups — 2026年3月6日科技资讯汇总</a></div>
+      </div>
+
+      <!-- 11 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">11</span>
+          <span class="card-title">科技巨头在白宫签署"电费保护承诺"，承诺自担AI能耗增量成本</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-policy">政策</span>
+          </div>
+        </div>
+        <p class="card-summary">谷歌、微软、Meta、甲骨文、xAI、OpenAI、亚马逊的CEO在白宫联合签署"电费保护承诺"，承诺自行建设或采购新增发电设施，不将AI数据中心带来的电力成本增量转嫁给普通用电消费者。此举部分由2026年中期选举前的政治压力驱动。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>这一承诺表明AI能源政治将成为科技公司长期运营成本的结构性变量。正在谈判长期云服务合同的B2B企业应将能源相关的价格保障条款纳入SLA谈判，以防范未来的隐性成本上涨。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://techstartups.com/2026/03/05/top-tech-news-today-march-5-2026/" target="_blank" rel="noopener">Tech Startups — 2026年3月5日科技资讯汇总</a></div>
+      </div>
+
+      <!-- 12 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">12</span>
+          <span class="card-title">Rowspace AI获5000万美元A轮融资，红杉+Emergence联投决策自动化平台</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-b2b">B2B</span>
+            <span class="tag tag-funding">融资</span>
+          </div>
+        </div>
+        <p class="card-summary">企业AI决策平台Rowspace完成5000万美元A轮融资，由红杉资本与Emergence Capital联合领投。Rowspace的核心产品能将非结构化企业数据转化为可执行的决策建议，并自动触发跨系统的工作流动作，无需人工干预。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>红杉与Emergence同时押注，是对"AI从辅助到自主决策"这一B2B价值主张的强力背书。这类平台直接切入企业运营决策链路，对传统BI工具、ERP咨询服务和人工分析师团队构成替代威胁。企业应在采购自动化决策平台前评估数据治理与审计追溯能力。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/" target="_blank" rel="noopener">AI Startup Funding News — 2026年3月融资动态</a></div>
+      </div>
+
+      <!-- 13 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">13</span>
+          <span class="card-title">百度芯片子公司昆仑芯向港交所递交上市申请，借AI芯片热潮募资</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-funding">融资</span>
+          </div>
+        </div>
+        <p class="card-summary">百度旗下AI芯片子公司昆仑芯科技正式向香港联交所提交上市申请，成为中国首批赴港上市的国产AI芯片公司之一。昆仑芯专注于AI推理芯片研发，已在互联网、金融、政务等领域实现规模化商业落地。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>昆仑芯上市为中国本土AI芯片供应链提供了重要的资本补充渠道，有助于加速国产算力替代进程。对于正在评估国内AI算力解决方案的B2B企业，昆仑芯的上市提升了其供应商稳定性，但美国出口管制动向仍是影响中国AI芯片产业长期竞争力的关键变量。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://www.cnbc.com/2026/01/02/baidus-semiconductor-kunlunxin-hong-kong-ipo-ai-chips-listing-china.html" target="_blank" rel="noopener">CNBC — 百度昆仑芯科技赴港上市申请</a></div>
+      </div>
+
+      <!-- 14 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">14</span>
+          <span class="card-title">英伟达GTC 2026：三星与SK海力士将展示HBM4内存，供应Rubin GPU</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-infra">基础设施</span>
+          </div>
+        </div>
+        <p class="card-summary">据TrendForce报道，三星和SK海力士将于GTC 2026期间重点展示HBM4高带宽内存方案，SK海力士已于2月12日完成HBM4量产出货，并确认为英伟达Rubin GPU系列配套供货。HBM4相比HBM3e在带宽与能效上实现重大跃升。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>HBM4量产落地标志着下一代AI训练集群的内存瓶颈正在被突破，将直接提升大模型训练与推理的吞吐效率。云厂商和高性能计算采购方可以将HBM4供货节点作为新一轮GPU采购计划的触发条件。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://www.trendforce.com/news/2026/02/25/news-nvidia-gtc-2026-in-focus-feynman-reportedly-on-tsmc-a16-samsung-sk-hynix-to-showcase-hbm4/" target="_blank" rel="noopener">TrendForce — 英伟达GTC 2026：Feynman芯片与HBM4展示</a></div>
+      </div>
+
+      <!-- 15 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">15</span>
+          <span class="card-title">OpenAI洽谈为北约非机密网络部署AI，军事AI商用化进程提速</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-policy">政策</span>
+          </div>
+        </div>
+        <p class="card-summary">OpenAI正与北约就在其非机密网络中部署AI模型展开谈判，若达成协议将成为前沿大模型首次在跨国军事联盟基础设施中的实质性部署。此谈判紧随OpenAI与美国国防部签署合作协议之后。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>北约AI部署将"政府/防务AI合规"从可选项变为主流B2B采购标准，预示着AI企业必须建立符合北约NIAG等军事信息安全框架的认证能力。这一领域将催生数十亿美元的专项B2B市场，覆盖AI安全审计、主权部署、边缘推理等细分赛道。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://blog.mean.ceo/ai-startup-funding-news-march-2026/" target="_blank" rel="noopener">AI Startup & Govtech News — 2026年3月</a></div>
+      </div>
+
+      <!-- 16 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">16</span>
+          <span class="card-title">苹果iPhone 17e正式开售，AI功能下沉至入门级市场</span>
+          <div class="tags">
+            <span class="tag tag-b2b">B2B</span>
+            <span class="tag tag-sales">销售</span>
+          </div>
+        </div>
+        <p class="card-summary">苹果iPhone 17e于3月11日正式开始发货，6.1英寸机身搭载Ceramic Shield 2屏幕保护，配备基础版AI增强Siri及Apple Intelligence功能，定价相比旗舰系列大幅下调。这是苹果首次将AI助手能力下放至入门级产品线。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>AI功能下沉至低价位段将大幅扩大企业移动设备的AI覆盖率，为面向中小企业的iOS B2B SaaS产品打开更广阔的地址可达市场（TAM）。MDM（移动设备管理）和企业移动安全厂商将迎来新一轮设备更换周期带来的销售机会。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://www.apple.com/newsroom/2026/03/apple-introduces-iphone-17e/" target="_blank" rel="noopener">苹果官方新闻室 — iPhone 17e发布公告</a></div>
+      </div>
+
+      <!-- 17 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">17</span>
+          <span class="card-title">Meta在Reality Labs内设立Applied AI工程部门，加速AI产品落地</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-b2b">B2B</span>
+          </div>
+        </div>
+        <p class="card-summary">Meta宣布在Reality Labs部门内成立独立的Applied AI工程组织，目标是将AI研究成果更快转化为AR/VR硬件产品、计算机视觉流水线和设备端智能助手的实际功能。此举标志着Meta从"研究优先"向"产品优先"的组织架构转型。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>Meta的组织调整加速了AR/VR设备上AI能力的商业化，对企业级AR应用开发商（工业培训、远程协作、沉浸式零售）而言是重要的平台信号。B2B团队应关注Meta Horizon for Business系列产品能力的迭代提速。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://blog.mean.ceo/ai-industry-trends-march-2026/" target="_blank" rel="noopener">AI Industry Trends — 2026年3月</a></div>
+      </div>
+
+      <!-- 18 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">18</span>
+          <span class="card-title">Anthropic投资方施压，推动公司与五角大楼重启谈判、寻求妥协方案</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-policy">政策</span>
+          </div>
+        </div>
+        <p class="card-summary">据报道，Anthropic的多位主要投资方正积极推动公司管理层与美国国防部缓和关系，以避免联邦政府全面封锁对Anthropic产品的采购。此前特朗普政府已命令联邦机构停用Anthropic技术，导致其政府市场业务陷入停滞。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>这一事件深刻揭示了AI安全价值观与政府大客户收入之间的内在张力，所有面向政府与国防市场的AI企业都将面临类似的路线选择压力。对于正在制定政府AI采购策略的B2B企业，供应商政治风险评估应成为尽职调查的标准环节。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://finance.yahoo.com/news/live/tech-stocks-today-nvidia-stops-h200-chip-production-anthropic-restarts-talks-with-pentagon-135928945.html" target="_blank" rel="noopener">雅虎财经 — Anthropic五角大楼谈判动态</a></div>
+      </div>
+
+      <!-- 19 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">19</span>
+          <span class="card-title">VC预测：2026年企业AI支出将集中在更少供应商，采购整合趋势加速</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-b2b">B2B</span>
+            <span class="tag tag-sales">销售</span>
+          </div>
+        </div>
+        <p class="card-summary">TechCrunch对多家顶级风险投资机构的调研显示，企业在2026年的AI支出总额将创历史新高，但采购商正在从"遍地撒网式"试点向"少而精"的战略供应商合并，平均AI SaaS供应商数量预计从2025年的11家降至5家以内。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>供应商整合趋势对AI SaaS销售团队是一把双刃剑：胜出者将获得更大合同和更长周期，但竞争将从"产品演示"升级为"战略整合方案"。处于平台层（如Salesforce Einstein、Microsoft Copilot）的企业将比独立AI工具更占优势，后者需要通过垂直行业深度来维持竞争壁垒。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://techcrunch.com/2025/12/30/vcs-predict-enterprises-will-spend-more-on-ai-in-2026-through-fewer-vendors/" target="_blank" rel="noopener">TechCrunch — VC预测2026年企业AI支出趋势</a></div>
+      </div>
+
+      <!-- 20 -->
+      <div class="card">
+        <div class="card-top">
+          <span class="card-num">20</span>
+          <span class="card-title">英伟达宣布退出OpenAI和Anthropic投资，预示AI实验室IPO周期开启</span>
+          <div class="tags">
+            <span class="tag tag-ai">AI</span>
+            <span class="tag tag-funding">融资</span>
+            <span class="tag tag-policy">政策</span>
+          </div>
+        </div>
+        <p class="card-summary">英伟达CEO黄仁勋在摩根士丹利科技媒体电信峰会上表示，此前对OpenAI和Anthropic的股权投资将是最后一笔，未来不会继续以战略股东身份参与AI实验室融资轮，并将两家公司的IPO预期列为退出时机。这一表态引发市场对两家公司上市时间表的广泛猜测。</p>
+        <div class="card-impact">
+          <div class="card-impact-label">B2B / AI产业链影响</div>
+          <p>OpenAI和Anthropic的IPO预期一旦落地，将是AI产业史上规模最大的流动性事件之一，可能引发市值重定价和企业客户定价策略的系统性调整。B2B采购方应密切关注IPO前后可能出现的产品打包、定价调整和企业协议条款变化。</p>
+        </div>
+        <div class="card-source">来源：<a href="https://techcrunch.com/2026/03/04/jensen-huang-says-nvidia-is-pulling-back-from-openai-and-anthropic-but-his-explanation-raises-more-questions-than-it-answers/" target="_blank" rel="noopener">TechCrunch — 黄仁勋：英伟达将停止对OpenAI和Anthropic的投资</a></div>
+      </div>
+
+    </div><!-- /news-grid -->
+
+    <div class="main-footer">
+      <span>每日科技情报台 &mdash; 专注B2B与AI产业链</span>
+      <span>情报编制：2026年3月7日 &middot; 来源：TechCrunch · The Verge · Wired · 雅虎财经 · MacRumors · DigiTimes</span>
+    </div>
+  </main>
+
+</body>
+</html>
